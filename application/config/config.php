@@ -24,7 +24,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 |
 */
 // $config['base_url'] = '';
-$base_url = $_ENV['APP_URL'];
+$base_url = @$_ENV['APP_URL'];
 
 if (!$base_url) {
     $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
