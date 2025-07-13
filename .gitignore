@@ -35,5 +35,9 @@ Thumbs.db
 .idea/
 .vscode/
 
+# Storage (jangan commit file cache)
+storage/cache/*
+!storage/cache/.gitignore
+
 docker-compose.yml
 Dockerfile
