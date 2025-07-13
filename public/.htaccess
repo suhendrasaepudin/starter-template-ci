@@ -1,0 +1,28 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Jika file atau direktori ada, jangan rewrite
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Rewrite ke index.php
+    RewriteRule ^(.*)$ index.php/$1 [L]
+</IfModule>
+
+# Hilangkan trailing slash (opsional)
+RewriteCond %{REQUEST_URI} /(.+)/$
+RewriteRule ^ %1 [R=301,L]
+
+# Proteksi file .env atau file sensitif lainnya
+<FilesMatch "^\.env">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Tidak perlu blok akses ke /system atau /application
+# Karena dua folder itu sekarang berada di luar public/
+# Jadi aman secara default tanpa redirect
+
+# Aktifkan CORS jika perlu (opsional)
+# Header set Access-Control-Allow-Origin "*"
