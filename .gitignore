@@ -39,5 +39,18 @@ Thumbs.db
 storage/cache/*
 !storage/cache/.gitignore
 
+# Abaikan semua dalam application/language
+application/language/*
+
+# Tapi jangan abaikan folder english dan indonesian
+!application/language/english/
+!application/language/indonesian/
+
+# Jangan abaikan file di dalam kedua folder itu
+!application/language/english/*
+!application/language/indonesian/*
+
+resources/views/auth/*
+
 docker-compose.yml
 Dockerfile
