@@ -36,10 +36,12 @@ Thumbs.db
 .vscode/
 
 # Storage (jangan commit file cache)
+# Abaikan semua isi folder storage/cache/
 storage/cache/*
-!storage/cache/.gitignore
+!storage/cache/.gitkeep
 
 public/captcha/*
+!public/captcha/.gitkeep
 
 # Abaikan semua dalam application/language
 application/language/*
