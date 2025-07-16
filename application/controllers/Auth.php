@@ -59,47 +59,67 @@ class Auth extends CI_Controller
      */
     public function login()
     {
-        $this->data['title'] = $this->lang->line('login_heading');
+        $this->load->library('Captcha');
+        $this->data['title'] = 'Halaman Login';
 
-        // validate form input
-        $this->form_validation->set_rules('identity', str_replace(':', '', $this->lang->line('login_identity_label')), 'required');
-        $this->form_validation->set_rules('password', str_replace(':', '', $this->lang->line('login_password_label')), 'required');
+        $config_form = [
+            [
+                'field' => 'identity',
+                'label' => 'Alamat Email',
+                'rules' => 'required'
+            ],
+            [
+                'field' => 'password',
+                'label' => 'Kata Sandi',
+                'rules' => 'required'
+            ],
+            [
+                'field' => 'captcha',
+                'label' => 'Captcha',
+                'rules' => 'required|callback_check_captcha'
+            ],
+        ];
+        $this->form_validation->set_rules($config_form);
+        $this->form_validation->set_message('required', '{field} Tidak Boleh kosong!');
 
         if ($this->form_validation->run() === TRUE) {
-            // check to see if the user is logging in
-            // check for "remember me"
             $remember = (bool)$this->input->post('remember');
 
-            if ($this->ion_auth->login($this->input->post('identity'), $this->input->post('password'), $remember)) {
-                //if the login is successful
-                //redirect them back to the home page
-                $this->session->set_flashdata('message', $this->ion_auth->messages());
-                redirect('/', 'refresh');
+            if ($this->ion_auth->login($this->input->post('identity', true), $this->input->post('password', true), $remember)) {
+                $this->session->set_flashdata('success', 'Berhasil masuk kedalam sistem!');
+                $this->captcha->clear();
+                redirect(site_url('backoffice/dasbor'), 'refresh');
             } else {
-                // if the login was un-successful
-                // redirect them back to the login page
-                $this->session->set_flashdata('message', $this->ion_auth->errors());
-                redirect('auth/login', 'refresh'); // use redirects instead of loading views for compatibility with MY_Controller libraries
+                $this->session->set_flashdata('warning', 'Gagal masuk kedalam sistem!');
+                redirect(site_url('masuk'), 'refresh');
             }
         } else {
-            // the user is not logging in so display the login page
-            // set the flash data error message if there is one
-            $this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
+            $this->data['captcha'] = $this->captcha->generate();
 
             $this->data['identity'] = [
                 'name' => 'identity',
                 'id' => 'identity',
                 'type' => 'text',
                 'value' => $this->form_validation->set_value('identity'),
+                'class' => 'form-control bg-light border-0 form-control-lg ' . (form_error('identity') ? 'is-invalid' : ''),
+                'placeholder' => 'Email'
             ];
 
             $this->data['password'] = [
                 'name' => 'password',
                 'id' => 'password',
                 'type' => 'password',
+                'class' => 'form-control bg-light border-0 form-control-lg ' . (form_error('password') ? 'is-invalid' : ''),
+                'placeholder' => 'Password'
             ];
 
-            // $this->_render_page('auth' . DIRECTORY_SEPARATOR . 'login', $this->data);
+            $this->data['captchaForm'] = [
+                'name' => 'captcha',
+                'id' => 'captcha',
+                'type' => 'text',
+                'class' => 'form-control bg-light border-0 form-control-lg ' . (form_error('captcha') ? 'is-invalid' : ''),
+                'placeholder' => 'Masukan Kode Captcha'
+            ];
 
             $this->template->view('backoffice.auth.login', $this->data);
         }
@@ -791,6 +811,18 @@ class Auth extends CI_Controller
         // This will return html on 3rd argument being true
         if ($returnhtml) {
             return $view_html;
+        }
+    }
+
+    function check_captcha()
+    {
+        $captcha = $this->session->userdata('captcha');
+        $kode_captcha = $_POST['captcha'];
+        if ($captcha != $kode_captcha) {
+            $this->form_validation->set_message('check_captcha', '{field} Tidak Sesuai!');
+            return false;
+        } else {
+            return true;
         }
     }
 }

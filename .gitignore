@@ -39,6 +39,8 @@ Thumbs.db
 storage/cache/*
 !storage/cache/.gitignore
 
+public/captcha/*
+
 # Abaikan semua dalam application/language
 application/language/*
 
