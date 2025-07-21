@@ -70,7 +70,7 @@
                 @if ($success = get_instance()->session->flashdata('success'))
                     Toast.fire({
                         icon: 'success',
-                        title: `{{ $success }}`
+                        {!! strip_tags($success) != $success ? "html: `$success`" : "text: `$success`" !!}
                     })
                 @endif
 
@@ -85,7 +85,7 @@
                 @if ($warning = get_instance()->session->flashdata('warning'))
                     Toast.fire({
                         icon: 'warning',
-                        title: `{{ $warning }}`
+                        {!! strip_tags($warning) != $warning ? "html: `$warning`" : "text: `$warning`" !!}
                     })
                 @endif
                 // -------------------------------------- 
@@ -99,7 +99,7 @@
                 @if ($error = get_instance()->session->flashdata('error'))
                     Toast.fire({
                         icon: 'error',
-                        title: `{{ $error }}`
+                        {!! strip_tags($error) != $error ? "html: `$error`" : "text: `$error`" !!}
                     })
                 @endif
                 // -------------------------------------- 

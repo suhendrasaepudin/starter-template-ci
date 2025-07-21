@@ -125,6 +125,164 @@ class Auth extends CI_Controller
         }
     }
 
+    public function register()
+    {
+        $this->load->library('Captcha');
+        $this->data['title'] = 'Halaman Register';
+
+        $tables = $this->config->item('tables', 'ion_auth');
+        $identity_column = $this->config->item('identity', 'ion_auth');
+
+        $config_form = [
+            [
+                'field' => 'first_name',
+                'label' => 'Awalan Nama',
+                'rules' => 'trim|required'
+            ],
+            [
+                'field' => 'last_name',
+                'label' => 'Akhiran Nama',
+                'rules' => 'trim|required'
+            ],
+            [
+                'field' => 'email',
+                'label' => 'Alamat Email',
+                'rules' => 'trim|required|valid_email|is_unique[' . $tables['users'] . '.email]'
+            ],
+            [
+                'field' => 'identity',
+                'label' => 'Nama Pengguna',
+                'rules' => 'trim|required|is_unique[' . $tables['users'] . '.' . $identity_column . ']'
+            ],
+            [
+                'field' => 'phone',
+                'label' => 'Nomor Telepon',
+                'rules' => 'trim|required|numeric'
+            ],
+            [
+                'field' => 'company',
+                'label' => 'Nama Perusahaan',
+                'rules' => 'trim|required'
+            ],
+            [
+                'field' => 'password',
+                'label' => 'Kata Sandi',
+                'rules' => 'trim|required'
+            ],
+            [
+                'field' => 'password_confirm',
+                'label' => 'Konfirmasi Kata Sandi',
+                'rules' => 'trim|required'
+            ],
+            [
+                'field' => 'captcha',
+                'label' => 'Captcha',
+                'rules' => 'required|callback_check_captcha'
+            ],
+        ];
+        $this->form_validation->set_rules($config_form);
+        $this->form_validation->set_message('required', '{field} Tidak Boleh kosong!');
+
+        if ($this->form_validation->run() === TRUE) {
+            $email = strtolower($this->input->post('email'));
+            $identity = $this->input->post('identity');
+            $password = $this->input->post('password');
+
+            $additional_data = [
+                'first_name' => $this->input->post('first_name'),
+                'last_name' => $this->input->post('last_name'),
+                'company' => $this->input->post('company'),
+                'phone' => $this->input->post('phone'),
+                'username' => $this->input->post('identity'),
+            ];
+
+            $save_user = $this->ion_auth->register($identity, $password, $email, $additional_data);
+
+            if ($save_user) {
+                $this->session->set_flashdata('success', $this->ion_auth->messages());
+                $this->captcha->clear();
+                return redirect(base_url("masuk"), 'refresh');
+            }
+            $this->session->set_flashdata('warning', $this->ion_auth->errors());
+        }
+
+        $this->data['captcha'] = $this->captcha->generate();
+        $this->data['first_name'] = [
+            'name' => 'first_name',
+            'id' => 'first_name',
+            'type' => 'text',
+            'value' => $this->form_validation->set_value('first_name'),
+            'class' => 'form-control bg-light border-0 form-control-lg ' . (form_error('first_name') ? 'is-invalid' : ''),
+            'placeholder' => 'Awalan Nama'
+        ];
+        $this->data['last_name'] = [
+            'name' => 'last_name',
+            'id' => 'last_name',
+            'type' => 'text',
+            'value' => $this->form_validation->set_value('last_name'),
+            'class' => 'form-control bg-light border-0 form-control-lg ' . (form_error('last_name') ? 'is-invalid' : ''),
+            'placeholder' => 'Akhiran Nama'
+        ];
+        $this->data['identity'] = [
+            'name' => 'identity',
+            'id' => 'identity',
+            'type' => 'text',
+            'value' => $this->form_validation->set_value('identity'),
+            'class' => 'form-control bg-light border-0 form-control-lg ' . (form_error('identity') ? 'is-invalid' : ''),
+            'placeholder' => 'Nama Pengguna'
+        ];
+        $this->data['email'] = [
+            'name' => 'email',
+            'id' => 'email',
+            'type' => 'text',
+            'value' => $this->form_validation->set_value('email'),
+            'class' => 'form-control bg-light border-0 form-control-lg ' . (form_error('email') ? 'is-invalid' : ''),
+            'placeholder' => 'Alamat Email'
+        ];
+        $this->data['company'] = [
+            'name' => 'company',
+            'id' => 'company',
+            'type' => 'text',
+            'value' => $this->form_validation->set_value('company'),
+            'class' => 'form-control bg-light border-0 form-control-lg ' . (form_error('company') ? 'is-invalid' : ''),
+            'placeholder' => 'Nama Perusahaan'
+        ];
+        $this->data['phone'] = [
+            'name' => 'phone',
+            'id' => 'phone',
+            'type' => 'text',
+            'value' => $this->form_validation->set_value('phone'),
+            'class' => 'form-control bg-light border-0 form-control-lg ' . (form_error('phone') ? 'is-invalid' : ''),
+            'placeholder' => 'Nomor Telepon'
+        ];
+        $this->data['password'] = [
+            'name' => 'password',
+            'id' => 'password',
+            'type' => 'password',
+            'value' => $this->form_validation->set_value('password'),
+            'class' => 'form-control bg-light border-0 form-control-lg ' . (form_error('password') ? 'is-invalid' : ''),
+            'placeholder' => 'Kata Sandi'
+        ];
+        $this->data['password_confirm'] = [
+            'name' => 'password_confirm',
+            'id' => 'password_confirm',
+            'type' => 'password',
+            'value' => $this->form_validation->set_value('password_confirm'),
+            'class' => 'form-control bg-light border-0 form-control-lg ' . (form_error('password_confirm') ? 'is-invalid' : ''),
+            'placeholder' => 'Masukan Ulang Kata Sandi'
+        ];
+
+        $this->data['captchaForm'] = [
+            'name' => 'captcha',
+            'id' => 'captcha',
+            'type' => 'text',
+            'class' => 'form-control bg-light border-0 form-control-lg ' . (form_error('captcha') ? 'is-invalid' : ''),
+            'placeholder' => 'Masukan Kode Captcha'
+        ];
+
+        $this->template->view('backoffice.auth.register', $this->data);
+    }
+
     /**
      * Log the user out
      */
