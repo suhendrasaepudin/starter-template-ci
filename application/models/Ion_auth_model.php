@@ -853,10 +853,14 @@ class Ion_auth_model extends CI_Model
         $user_data = array_merge($this->_filter_data($this->tables['users'], $additional_data), $data);
 
         $this->trigger_events('extra_set');
+        $this->load->library('uuid'); // pastikan punya library UUID
+
+        $user_data['id'] = $this->uuid->v4();  // generate UUID v4
 
         $this->db->insert($this->tables['users'], $user_data);
 
-        $id = $this->db->insert_id($this->tables['users'] . '_id_seq');
+        // $id = $this->db->insert_id();
+        $id = $user_data['id'];
 
         if (!$id) {
             return FALSE;
@@ -905,6 +909,8 @@ class Ion_auth_model extends CI_Model
             ->limit(1)
             ->order_by('id', 'desc')
             ->get($this->tables['users']);
+
+
 
         if ($this->is_max_login_attempts_exceeded($identity)) {
             // Hash something anyway, just to take up time
@@ -1560,8 +1566,9 @@ class Ion_auth_model extends CI_Model
             if ($this->db->insert(
                 $this->tables['users_groups'],
                 [
-                    $this->join['groups'] => (float)$group_id,
-                    $this->join['users']  => (float)$user_id
+                    'id' => $this->uuid->v4(),
+                    $this->join['groups'] => $group_id,
+                    $this->join['users']  => $user_id
                 ]
             )) {
                 if (isset($this->_cache_groups[$group_id])) {
@@ -1609,7 +1616,7 @@ class Ion_auth_model extends CI_Model
                 // Cast to float to support bigint data type
                 $this->db->delete(
                     $this->tables['users_groups'],
-                    [$this->join['groups'] => (float)$group_id, $this->join['users'] => (float)$user_id]
+                    [$this->join['groups'] => $group_id, $this->join['users'] => $user_id]
                 );
                 if (isset($this->_cache_user_in_group[$user_id]) && isset($this->_cache_user_in_group[$user_id][$group_id])) {
                     unset($this->_cache_user_in_group[$user_id][$group_id]);
@@ -1621,7 +1628,7 @@ class Ion_auth_model extends CI_Model
         // otherwise remove user from all groups
         else {
             // Cast to float to support bigint data type
-            if ($return = $this->db->delete($this->tables['users_groups'], [$this->join['users'] => (float)$user_id])) {
+            if ($return = $this->db->delete($this->tables['users_groups'], [$this->join['users'] => $user_id])) {
                 $this->_cache_user_in_group[$user_id] = [];
             }
         }
