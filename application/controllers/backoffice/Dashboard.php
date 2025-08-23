@@ -2,9 +2,14 @@
 
 class Dashboard extends CI_Controller
 {
+    function __construct()
+    {
+        parent::__construct();
+        check_login();
+    }
+
     public function index()
     {
-        var_dump($this->session->userdata());
         $this->template->view('backoffice.dashboard.index');
     }
 }

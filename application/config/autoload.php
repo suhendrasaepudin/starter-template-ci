@@ -90,7 +90,7 @@ $autoload['drivers'] = array();
 |	$autoload['helper'] = array('url', 'file');
 */
 // $autoload['helper'] = array();
-$autoload['helper'] = array('url', 'env', 'form', 'form_additional');
+$autoload['helper'] = array('url', 'env', 'form', 'form_additional', 'ion_auth');
 
 /*
 | -------------------------------------------------------------------
