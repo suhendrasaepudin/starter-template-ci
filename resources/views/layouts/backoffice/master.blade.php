@@ -65,10 +65,10 @@
     <!--begin::App Wrapper-->
     <div class="app-wrapper">
         <!--begin::Header-->
-        @include('partials.master.navbar')
+    @include('partials.backoffice.navbar')
         <!--end::Header-->
         <!--begin::Sidebar-->
-        @include('partials.master.sidebar')
+    @include('partials.backoffice.sidebar')
         <!--end::Sidebar-->
         <!--begin::App Main-->
         <main class="app-main">
@@ -99,7 +99,7 @@
         </main>
         <!--end::App Main-->
         <!--begin::Footer-->
-        {{-- @include('partials.master.footer') --}}
+    {{-- @include('partials.backoffice.footer') --}}
         <!--end::Footer-->
     </div>
     <!--end::App Wrapper-->

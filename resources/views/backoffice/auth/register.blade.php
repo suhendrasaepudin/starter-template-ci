@@ -1,4 +1,4 @@
-@extends('layouts.backoffice.auth')
+@extends('layouts.auth.master')
 
 @section('title', 'Halaman Register')
 
