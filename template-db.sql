@@ -118,7 +118,7 @@ INSERT INTO `pengguna_grup` (`id`, `pengguna_id`, `grup_id`) VALUES
 
 -- Foreign key constraints removed from dump to avoid import errors (1215).
 -- Jika Anda ingin menambahkan FK, jalankan secara manual setelah import:
--- ALTER TABLE `pengguna_grup` ADD CONSTRAINT `pengguna_grup_ibfk_1` FOREIGN KEY (`pengguna_id`) REFERENCES `pengguna` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
--- ALTER TABLE `pengguna_grup` ADD CONSTRAINT `pengguna_grup_ibfk_2` FOREIGN KEY (`grup_id`) REFERENCES `grup` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `pengguna_grup` ADD CONSTRAINT `pengguna_grup_ibfk_1` FOREIGN KEY (`pengguna_id`) REFERENCES `pengguna` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `pengguna_grup` ADD CONSTRAINT `pengguna_grup_ibfk_2` FOREIGN KEY (`grup_id`) REFERENCES `grup` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 SET FOREIGN_KEY_CHECKS = 1;
