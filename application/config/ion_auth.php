@@ -39,10 +39,10 @@ $config['database_group_name'] = '';
 | -------------------------------------------------------------------------
 | Database table names.
 */
-$config['tables']['users']           = 'users';
-$config['tables']['groups']          = 'groups';
-$config['tables']['users_groups']    = 'users_groups';
-$config['tables']['login_attempts']  = 'login_attempts';
+$config['tables']['users']           = 'pengguna';
+$config['tables']['groups']          = 'grup';
+$config['tables']['users_groups']    = 'pengguna_grup';
+$config['tables']['login_attempts']  = 'upaya_login';
 
 /*
  | Users table column and Group table column you want to join WITH.
@@ -50,8 +50,8 @@ $config['tables']['login_attempts']  = 'login_attempts';
  | Joins from users.id
  | Joins from groups.id
  */
-$config['join']['users']  = 'user_id';
-$config['join']['groups'] = 'group_id';
+$config['join']['users']  = 'pengguna_id';
+$config['join']['groups'] = 'grup_id';
 
 /*
  | -------------------------------------------------------------------------

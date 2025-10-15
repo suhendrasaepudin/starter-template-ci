@@ -138,7 +138,7 @@ class Ion_auth
     {
         // Retrieve user information
         $user = $this->where($this->ion_auth_model->identity_column, $identity)
-            ->where('active', 1)
+            ->where('aktif', 1)
             ->users()->row();
 
         if ($user) {
@@ -148,7 +148,7 @@ class Ion_auth
             if ($code) {
                 $data = [
                     'identity' => $identity,
-                    'forgotten_password_code' => $code
+                    'kode_lupa_sandi' => $code
                 ];
 
                 if (!$this->config->item('use_ci_email', 'ion_auth')) {
@@ -193,7 +193,7 @@ class Ion_auth
             if ($this->config->item('forgot_password_expiration', 'ion_auth') > 0) {
                 //Make sure it isn't expired
                 $expiration = $this->config->item('forgot_password_expiration', 'ion_auth');
-                if (time() - $user->forgotten_password_time > $expiration) {
+                if (time() - $user->waktu_lupa_sandi > $expiration) {
                     //it has expired
                     $identity = $user->{$this->config->item('identity', 'ion_auth')};
                     $this->ion_auth_model->clear_forgotten_password_code($identity);

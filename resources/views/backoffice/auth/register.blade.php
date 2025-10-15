@@ -9,73 +9,89 @@
                 <h4 class="text-uppercase fw-bold h4 font-color-page mt-3">{{ env('APP_NAME') }}</h4>
                 <p class="font-color-page text-uppercase">{{ env('APP_SUBNAME') }}</p>
             </div>
-            {!! form_open('register') !!}
+            {!! form_open('auth/register') !!}
             <div class="row justify-content-center">
                 <div class="col-10 col-sm-8 col-md-10 col-lg-7">
                     <h4 class="fw-bold mb-5">Silakan Daftar</h4>
                     <div class="form-group mb-4">
                         <div class="input-group">
                             {!! form_input($first_name) !!}
-                            <div id="first_nameError" class="invalid-feedback">
-                                {!! form_error($first_name['name']) !!}
-                            </div>
+                            @if (function_exists('form_error') && ! empty(form_error($first_name['name'] ?? '')))
+                                <div id="first_nameError" class="invalid-feedback">
+                                    {!! form_error($first_name['name']) !!}
+                                </div>
+                            @endif
                         </div>
                     </div>
                     <div class="form-group mb-4">
                         <div class="input-group">
                             {!! form_input($last_name) !!}
-                            <div id="last_nameError" class="invalid-feedback">
-                                {!! form_error($last_name['name']) !!}
-                            </div>
+                            @if (function_exists('form_error') && ! empty(form_error($last_name['name'] ?? '')))
+                                <div id="last_nameError" class="invalid-feedback">
+                                    {!! form_error($last_name['name']) !!}
+                                </div>
+                            @endif
                         </div>
                     </div>
                     <div class="form-group mb-4">
                         <div class="input-group">
                             {!! form_input($identity) !!}
-                            <div id="identityError" class="invalid-feedback">
-                                {!! form_error($identity['name']) !!}
-                            </div>
+                            @if (function_exists('form_error') && ! empty(form_error($identity['name'] ?? '')))
+                                <div id="identityError" class="invalid-feedback">
+                                    {!! form_error($identity['name']) !!}
+                                </div>
+                            @endif
                         </div>
                     </div>
                     <div class="form-group mb-4">
                         <div class="input-group">
                             {!! form_input($email) !!}
-                            <div id="emailError" class="invalid-feedback">
-                                {!! form_error($email['name']) !!}
-                            </div>
+                            @if (function_exists('form_error') && ! empty(form_error($email['name'] ?? '')))
+                                <div id="emailError" class="invalid-feedback">
+                                    {!! form_error($email['name']) !!}
+                                </div>
+                            @endif
                         </div>
                     </div>
                     <div class="form-group mb-4">
                         <div class="input-group">
                             {!! form_input($company) !!}
-                            <div id="companyError" class="invalid-feedback">
-                                {!! form_error($company['name']) !!}
-                            </div>
+                            @if (function_exists('form_error') && ! empty(form_error($company['name'] ?? '')))
+                                <div id="companyError" class="invalid-feedback">
+                                    {!! form_error($company['name']) !!}
+                                </div>
+                            @endif
                         </div>
                     </div>
                     <div class="form-group mb-4">
                         <div class="input-group">
                             {!! form_input($phone) !!}
-                            <div id="phoneError" class="invalid-feedback">
-                                {!! form_error($phone['name']) !!}
-                            </div>
+                            @if (function_exists('form_error') && ! empty(form_error($phone['name'] ?? '')))
+                                <div id="phoneError" class="invalid-feedback">
+                                    {!! form_error($phone['name']) !!}
+                                </div>
+                            @endif
                         </div>
                     </div>
 
                     <div class="form-group mb-4">
                         <div class="input-group">
                             {!! form_input($password) !!}
-                            <div id="passwordError" class="invalid-feedback">
-                                {!! form_error($password['name']) !!}
-                            </div>
+                            @if (function_exists('form_error') && ! empty(form_error($password['name'] ?? '')))
+                                <div id="passwordError" class="invalid-feedback">
+                                    {!! form_error($password['name']) !!}
+                                </div>
+                            @endif
                         </div>
                     </div>
                     <div class="form-group mb-4">
                         <div class="input-group">
                             {!! form_input($password_confirm) !!}
-                            <div id="password_confirmError" class="invalid-feedback">
-                                {!! form_error($password_confirm['name']) !!}
-                            </div>
+                            @if (function_exists('form_error') && ! empty(form_error($password_confirm['name'] ?? '')))
+                                <div id="password_confirmError" class="invalid-feedback">
+                                    {!! form_error($password_confirm['name']) !!}
+                                </div>
+                            @endif
                         </div>
                     </div>
                     <div class="form-group d-flex mb-3 justify-content-between">
@@ -85,7 +101,7 @@
                         </div>
                         <div class="text-center justify-content-center d-flex align-items-center justify-content-center form-control border-0 bg-light form-control-lg"
                             style="width: 20%;">
-                            <a class="text-muted" href="{{ base_url('resgister') }}"> <i class="fas fa-undo"></i></a>
+                            <a class="text-muted" href="{{ base_url('register') }}"> <i class="fas fa-undo"></i></a>
                         </div>
                     </div>
                     <div class="input-group mb-3">

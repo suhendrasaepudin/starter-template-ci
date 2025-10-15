@@ -24,9 +24,11 @@
                                 </svg>
                             </div>
                             {!! form_input($identity) !!}
-                            <div id="identityError" class="invalid-feedback">
-                                {!! form_error($identity['name']) !!}
-                            </div>
+                            @if (function_exists('form_error') && ! empty(form_error($identity['name'] ?? '')))
+                                <div id="identityError" class="invalid-feedback">
+                                    {!! form_error($identity['name']) !!}
+                                </div>
+                            @endif
                         </div>
                     </div>
                     <div class="form-group mb-4">
@@ -40,9 +42,11 @@
                                 </svg>
                             </div>
                             {!! form_input($password) !!}
-                            <div id="passwordError" class="invalid-feedback">
-                                {!! form_error($password['name']) !!}
-                            </div>
+                            @if (function_exists('form_error') && ! empty(form_error($password['name'] ?? '')))
+                                <div id="passwordError" class="invalid-feedback">
+                                    {!! form_error($password['name']) !!}
+                                </div>
+                            @endif
                         </div>
                     </div>
                     <div class="form-group d-flex mb-3 justify-content-between">
@@ -70,8 +74,15 @@
                         </div>
                     </div>
                     <div class="col-md-12">
-                        <div class="d-grid gap-2 mt-5">
-                            <button type="submit" class="btn btn-login text-white mb-3">Login</button>
+                        <div class="d-grid gap-2 mt-3">
+                            <div class="form-check mb-3 text-start">
+                                <label class="form-check-label">
+                                    <input class="form-check-input me-2" type="checkbox" name="remember" id="remember" value="1"> Ingat saya
+                                </label>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-login text-white mb-3">Login</button>
+                            </div>
                         </div>
                     </div>
                     <div class="col-12">
@@ -89,9 +100,3 @@
         </div>
     </div>
 @endsection
-
-@push('scripts')
-    <script>
-        console.log("Halaman dashboard dimuat.");
-    </script>
-@endpush

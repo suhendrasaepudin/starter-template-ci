@@ -22,6 +22,46 @@ class Auth extends CI_Controller
     }
 
     /**
+     * Helper: ambil error Ion Auth terformat
+     * @param bool $as_array jika true, kembalikan array dari errors_array(), else string
+     * @param bool $strip_tags jika true, hapus tag HTML dari hasil string
+     * @return array|string
+     */
+    protected function ion_error($as_array = false, $strip_tags = true)
+    {
+        if ($as_array) {
+            $errors = $this->ion_auth->errors_array();
+            if ($strip_tags) {
+                return array_map('strip_tags', $errors);
+            }
+            return $errors;
+        }
+
+        $html = $this->ion_auth->errors();
+        return $strip_tags ? strip_tags($html) : $html;
+    }
+
+    /**
+     * Helper: ambil messages Ion Auth terformat
+     * @param bool $as_array jika true, kembalikan array dari messages_array(), else string
+     * @param bool $strip_tags jika true, hapus tag HTML dari hasil string
+     * @return array|string
+     */
+    protected function ion_message($as_array = false, $strip_tags = true)
+    {
+        if ($as_array) {
+            $msgs = $this->ion_auth->messages_array();
+            if ($strip_tags) {
+                return array_map('strip_tags', $msgs);
+            }
+            return $msgs;
+        }
+
+        $html = $this->ion_auth->messages();
+        return $strip_tags ? strip_tags($html) : $html;
+    }
+
+    /**
      * Redirect if needed, otherwise display the user list
      */
     public function index()
@@ -90,7 +130,8 @@ class Auth extends CI_Controller
                 $this->captcha->clear();
                 redirect(site_url('backoffice/dasbor'), 'refresh');
             } else {
-                $this->session->set_flashdata('warning', 'Gagal masuk kedalam sistem!');
+                // Set flashdata to Ion Auth error message so front-end can replace/display it
+                $this->session->set_flashdata('warning', $this->ion_auth->errors());
                 redirect(site_url('masuk'), 'refresh');
             }
         } else {
@@ -189,21 +230,21 @@ class Auth extends CI_Controller
             $password = $this->input->post('password');
 
             $additional_data = [
-                'first_name' => $this->input->post('first_name'),
-                'last_name' => $this->input->post('last_name'),
-                'company' => $this->input->post('company'),
-                'phone' => $this->input->post('phone'),
-                'username' => $this->input->post('identity'),
+                'nama_depan' => $this->input->post('first_name'),
+                'nama_belakang' => $this->input->post('last_name'),
+                'perusahaan' => $this->input->post('company'),
+                'telepon' => $this->input->post('phone'),
+                'nama_pengguna' => $this->input->post('identity'),
             ];
 
             $save_user = $this->ion_auth->register($identity, $password, $email, $additional_data);
 
             if ($save_user) {
-                $this->session->set_flashdata('success', $this->ion_auth->messages());
+                $this->session->set_flashdata('success', $this->ion_message(false, true));
                 $this->captcha->clear();
                 return redirect(base_url("masuk"), 'refresh');
             }
-            $this->session->set_flashdata('warning', $this->ion_auth->errors());
+            $this->session->set_flashdata('warning', $this->ion_error(false, true));
         }
 
         $this->data['captcha'] = $this->captcha->generate();
@@ -351,10 +392,10 @@ class Auth extends CI_Controller
 
             if ($change) {
                 //if the password was successfully changed
-                $this->session->set_flashdata('message', $this->ion_auth->messages());
+                $this->session->set_flashdata('message', $this->ion_message(false, true));
                 $this->logout();
             } else {
-                $this->session->set_flashdata('message', $this->ion_auth->errors());
+                $this->session->set_flashdata('message', $this->ion_error(false, true));
                 redirect('auth/change_password', 'refresh');
             }
         }
@@ -404,7 +445,7 @@ class Auth extends CI_Controller
                     $this->ion_auth->set_error('forgot_password_email_not_found');
                 }
 
-                $this->session->set_flashdata('message', $this->ion_auth->errors());
+                $this->session->set_flashdata('message', $this->ion_error(false, true));
                 redirect("auth/forgot_password", 'refresh');
             }
 
@@ -413,10 +454,10 @@ class Auth extends CI_Controller
 
             if ($forgotten) {
                 // if there were no errors
-                $this->session->set_flashdata('message', $this->ion_auth->messages());
+                $this->session->set_flashdata('message', $this->ion_message(false, true));
                 redirect("auth/login", 'refresh'); //we should display a confirmation page here instead of the login page
             } else {
-                $this->session->set_flashdata('message', $this->ion_auth->errors());
+                $this->session->set_flashdata('message', $this->ion_error(false, true));
                 redirect("auth/forgot_password", 'refresh');
             }
         }
@@ -489,17 +530,17 @@ class Auth extends CI_Controller
 
                     if ($change) {
                         // if the password was successfully changed
-                        $this->session->set_flashdata('message', $this->ion_auth->messages());
+                        $this->session->set_flashdata('message', $this->ion_message(false, true));
                         redirect("auth/login", 'refresh');
                     } else {
-                        $this->session->set_flashdata('message', $this->ion_auth->errors());
+                        $this->session->set_flashdata('message', $this->ion_error(false, true));
                         redirect('auth/reset_password/' . $code, 'refresh');
                     }
                 }
             }
         } else {
             // if the code is invalid then send them back to the forgot password page
-            $this->session->set_flashdata('message', $this->ion_auth->errors());
+            $this->session->set_flashdata('message', $this->ion_error(false, true));
             redirect("auth/forgot_password", 'refresh');
         }
     }
@@ -522,11 +563,11 @@ class Auth extends CI_Controller
 
         if ($activation) {
             // redirect them to the auth page
-            $this->session->set_flashdata('message', $this->ion_auth->messages());
+            $this->session->set_flashdata('message', $this->ion_message(false, true));
             redirect("auth", 'refresh');
         } else {
             // redirect them to the forgot password page
-            $this->session->set_flashdata('message', $this->ion_auth->errors());
+            $this->session->set_flashdata('message', $this->ion_error(false, true));
             redirect("auth/forgot_password", 'refresh');
         }
     }
@@ -619,12 +660,12 @@ class Auth extends CI_Controller
         if ($this->form_validation->run() === TRUE && $this->ion_auth->register($identity, $password, $email, $additional_data)) {
             // check to see if we are creating the user
             // redirect them back to the admin page
-            $this->session->set_flashdata('message', $this->ion_auth->messages());
+            $this->session->set_flashdata('message', $this->ion_message(false, true));
             redirect("auth", 'refresh');
         } else {
             // display the create user form
             // set the flash data error message if there is one
-            $this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
+            $this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_error(false, true) ? $this->ion_error(false, true) : $this->session->flashdata('message')));
 
             $this->data['first_name'] = [
                 'name' => 'first_name',
@@ -757,11 +798,11 @@ class Auth extends CI_Controller
                 // check to see if we are updating the user
                 if ($this->ion_auth->update($user->id, $data)) {
                     // redirect them back to the admin page if admin, or to the base url if non admin
-                    $this->session->set_flashdata('message', $this->ion_auth->messages());
+                    $this->session->set_flashdata('message', $this->ion_message(false, true));
                     $this->redirectUser();
                 } else {
                     // redirect them back to the admin page if admin, or to the base url if non admin
-                    $this->session->set_flashdata('message', $this->ion_auth->errors());
+                    $this->session->set_flashdata('message', $this->ion_error(false, true));
                     $this->redirectUser();
                 }
             }
@@ -771,7 +812,7 @@ class Auth extends CI_Controller
         $this->data['csrf'] = $this->_get_csrf_nonce();
 
         // set the flash data error message if there is one
-        $this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
+        $this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_error(false, true) ? $this->ion_error(false, true) : $this->session->flashdata('message')));
 
         // pass the user to the view
         $this->data['user'] = $user;
@@ -844,7 +885,7 @@ class Auth extends CI_Controller
 
         // display the create group form
         // set the flash data error message if there is one
-        $this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
+        $this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_error(false, true) ? $this->ion_error(false, true) : $this->session->flashdata('message')));
 
         $this->data['group_name'] = [
             'name'  => 'group_name',
