@@ -6,10 +6,11 @@ class Dashboard extends CI_Controller
     {
         parent::__construct();
         check_login();
+        $this->template->set_layout('layouts/backoffice/main');
     }
 
     public function index()
     {
-        $this->template->view('backoffice.dashboard.index');
+        $this->template->view('backoffice/dashboard/index');
     }
 }

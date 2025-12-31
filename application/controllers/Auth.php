@@ -125,10 +125,13 @@ class Auth extends CI_Controller
         if ($this->form_validation->run() === TRUE) {
             $remember = (bool)$this->input->post('remember');
 
+            // return var_dump($this->ion_auth->login($this->input->post('identity', true), $this->input->post('password', true), $remember));
+
+
             if ($this->ion_auth->login($this->input->post('identity', true), $this->input->post('password', true), $remember)) {
-                $this->session->set_flashdata('success', 'Berhasil masuk kedalam sistem!');
                 $this->captcha->clear();
-                redirect(site_url('backoffice/dasbor'), 'refresh');
+                $this->session->set_flashdata('success', 'Berhasil masuk kedalam sistem!');
+                return redirect(site_url('backoffice/dasbor'));
             } else {
                 // Set flashdata to Ion Auth error message so front-end can replace/display it
                 $this->session->set_flashdata('warning', $this->ion_auth->errors());
@@ -162,7 +165,8 @@ class Auth extends CI_Controller
                 'placeholder' => 'Masukan Kode Captcha'
             ];
 
-            $this->template->view('backoffice.auth.login', $this->data);
+            $this->template->set_layout('layouts/backoffice/auth/login');
+            $this->template->view('backoffice/auth/login', $this->data);
         }
     }
 

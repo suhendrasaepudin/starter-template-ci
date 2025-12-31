@@ -24,16 +24,16 @@ body {
 }
 
 .bg-login {
-	background-color: #7d95e4;
+	background-color: #0976c9;
 }
 
 .btn-login {
-	background: #7736ff;
+	background: #0976c9;
 	border-radius: 8.76993px;
 	height: 60.3px;
 }
 .btn-login:hover {
-	background: #6931e2;
+	background: #0d64a6;
 	border-radius: 8.76993px;
 	height: 60.3px;
 }
